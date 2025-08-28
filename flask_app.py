@@ -1,49 +1,33 @@
-# flask_app.py
-from flask import Flask, request, url_for
+#Exercicio 3
+
+from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from datetime import datetime
 
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
+moment = Moment(app)
 
-#Home
 @app.route("/")
 def home():
-    return f"""
-    <h1>Avaliação contínua: Aula 030</h1>
-    <ul>
-        <li><a href="{url_for('home')}">Home</a></li>
-        <li><a href="{url_for('identificacao', nome='Samuel Lucena', prontuario='PT3031756', instituicao='IFSP')}">Identificação</a></li>
-        <li><a href="{url_for('contexto_requisicao')}">Contexto da requisição</a></li>
-    </ul>
-    """
+    """Renderiza a página inicial com a data e hora atuais."""
+    return render_template('index.html', current_time=datetime.utcnow())
 
-#Identificação
-@app.route("/user/<nome>/<prontuario>/<instituicao>")
-def identificacao(nome, prontuario, instituicao):
-    return f"""
-    <h1>Avaliação contínua: Aula 030</h1>
+@app.route('/user/<username>')
+def user_profile(username):
+    """Renderiza uma página de perfil para um usuário específico."""
+    return render_template('user.html', name=username)
 
-    <h2><b>Aluno:</b> {nome}</h2>
-    <h2><b>Prontuário:</b> {prontuario}</h2>
-    <h2><b>Instituição:</b> {instituicao}</h2>
-
-    <p><a href="{url_for('home')}">Voltar</a></p>
-    """
-
-#Contexto da requisição
-@app.route("/contextorequisicao")
-def contexto_requisicao():
-    user_agent = request.headers.get("User-Agent", "desconhecido")
-    remote_ip  = request.remote_addr or "desconhecido"
-    host       = request.host
-
-    return f"""
-    <h1>Avaliação contínua: Aula 030</h1>
-
-    <h2><b>Seu navegador é:</b> {user_agent}</h2>
-    <h2><b>O IP do computador remoto é:</b> {remote_ip}</h2>
-    <h2><b>O host da aplicação é:</b> {host}</h2>
-
-    <p><a href="{url_for('home')}">Voltar</a></p>
-    """
+@app.route('/rotainexistente')
+def not_found_route():
+    """Uma rota definida que mostra a página de erro 404."""
+    return render_template('404.html'), 404
+    
+@app.errorhandler(404)
+def page_not_found(e):
+    """Manipulador de erro para páginas não encontradas (404)."""
+    return render_template('404.html'), 404
 
 if __name__ == "__main__":
     app.run(debug=True)
