@@ -41,3 +41,11 @@ def contextorequisicao(name):
                            user_agent=user_agent, 
                            remote_addr=remote_addr,
                            remote_host=remote_host);
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+
+class NameForm(FlaskForm):
+    name = StringField('What is your name?', validators=[DataRequired()])
+    submit = SubmitField('Submit')
